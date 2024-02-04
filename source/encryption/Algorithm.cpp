@@ -1,7 +1,5 @@
 #include "Algorithm.h"
 
-#include <exception>
-
 std::uint64_t Algorithm::encode (const Algorithm::EncryptionScheme& scheme) noexcept {
   std::uint64_t encoded{0};
   for (int index = 0; index < 16; index++) {
