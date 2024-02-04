@@ -26,6 +26,7 @@ std::uint64_t Algorithm::encode (const Algorithm::EncryptionScheme& scheme) noex
     addend <<= 2 * index;
     encoded += addend;
   }
+  encoded += encoded << 32;
   return encoded;
 }
 
