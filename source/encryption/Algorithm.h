@@ -1,7 +1,10 @@
 #pragma once
+
 #include <array>
 #include <cstdint>
+#include <exception>
 
+#include "encryption/FES.h"
 #include "encryption/Key.h"
 #include "image/bitmap_image.h"
 
