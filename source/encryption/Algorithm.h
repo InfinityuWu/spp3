@@ -2,6 +2,9 @@
 #include <array>
 #include <cstdint>
 
+#include "encryption/Key.h"
+#include "image/bitmap_image.h"
+
 class Algorithm {
 
   public:
@@ -17,7 +20,7 @@ class Algorithm {
     [[nodiscard]] static EncryptionScheme decode (const std::uint64_t encoded);
 
     // Task 1d)
-    [[nodiscard]] static BitmapImage perform_scheme (const BitmapImage& original_image, const FES::key_type& encryption_key, const EncryptionScheme& scheme) noexcept;
+    [[nodiscard]] static BitmapImage perform_scheme (const BitmapImage& original_image, const Key::key_type& encryption_key, const EncryptionScheme& scheme) noexcept;
 
   private:
 
