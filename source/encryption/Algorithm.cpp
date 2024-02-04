@@ -44,3 +44,37 @@ Algorithm::EncryptionScheme Algorithm::decode (const std::uint64_t encoded) {
   }
   return scheme;
 }
+
+BitmapImage perform_scheme (const BitmapImage& original_image, const Key::key_type& encryption_key, const Algorithm::EncryptionScheme& scheme) noexcept {
+  // Copying of data. Required or are we allowed to manipulate input data? This section could be easily parallelized
+  const auto height = original_image.get_height();
+  const auto width = original_image.get_width();
+  auto result_image = BitmapImage{height, width};
+  for (auto y = std::uint32_t(0); y < height; y++) {
+    for (auto x = std::uint32_t(0); x < width; x++) {
+      result_image.set_pixel(y, x, original_image.get_pixel(y, x));
+    }
+  }
+  const key_type current_key{};
+  for (int index = 0; index < 48; index++) {
+    current_key[i] = encryption_key[i];
+  }
+  // Actual calculations
+  for (int index = 0; index < 16; i++) {
+    switch (scheme[index]) {
+      case Algorithm::EncryptionStep::E:
+        result_image = FES::encrypt(result_image, current_key);
+        break;
+      case Algorithm::EncryptionStep::D:
+        result_image = FES::decrypt(result_image, current_key);
+        break;
+      case Algorithm::EncryptionStep::K:
+        current_key = Key::produce_new_key(current_key);
+        break;
+      case Algorithm::EncryptionStep::T:
+        result_image = result_image.transpose();
+        break;
+    }
+    return result_image;
+  }
+}
