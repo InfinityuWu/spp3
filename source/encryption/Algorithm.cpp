@@ -1,5 +1,6 @@
 #include "Algorithm.h"
 
+// task 1b)
 std::uint64_t Algorithm::encode (const Algorithm::EncryptionScheme& scheme) noexcept {
   std::uint64_t encoded{0};
   for (int index = 0; index < 16; index++) {
@@ -28,6 +29,7 @@ std::uint64_t Algorithm::encode (const Algorithm::EncryptionScheme& scheme) noex
   return encoded;
 }
 
+// task 1c)
 Algorithm::EncryptionScheme Algorithm::decode (const std::uint64_t encoded) {
   Algorithm::EncryptionScheme scheme{};
   for (int index = 0; index < 16; index++) {
@@ -43,6 +45,7 @@ Algorithm::EncryptionScheme Algorithm::decode (const std::uint64_t encoded) {
   return scheme;
 }
 
+// task 1d)
 BitmapImage perform_scheme (const BitmapImage& original_image, const Key::key_type& encryption_key, const Algorithm::EncryptionScheme& scheme) noexcept {
   // Copying of data. Required or are we allowed to manipulate input data? This section could be easily parallelized
   const auto height = original_image.get_height();
