@@ -10,8 +10,8 @@ class Algorithm {
   public:
 
     // Task 1a)
-    enum EncryptionStep {E, D, K, T};                        // leave at class scope or put at file scope maybe?
-    using EncryptionScheme = std::array<EncryptionStep,16>;  // alternatively use typedef instead of using for alias
+    enum class EncryptionStep : std::uint64_t {E = 0, D = 1, K = 2, T = 3};  // leave at class scope or put at file scope maybe?
+    using EncryptionScheme = std::array<EncryptionStep,16>;                  // alternatively use typedef instead of using for alias
 
     // Task 1b)
     [[nodiscard]] static std::uint64_t encode (const EncryptionScheme& scheme) noexcept;
