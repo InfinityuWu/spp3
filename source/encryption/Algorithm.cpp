@@ -29,7 +29,7 @@ std::uint64_t Algorithm::encode (const Algorithm::EncryptionScheme& scheme) noex
   return encoded;
 }
 
-Algorithm::EncryptionScheme decode (const std::uint64_t encoded) {
+Algorithm::EncryptionScheme Algorithm::decode (const std::uint64_t encoded) {
   Algorithm::EncryptionScheme scheme{};
   for (int index = 0; index < 16; index++) {
     uint64_t first_appearance = (encoded << (62 - 2 * index)) >> 62;
