@@ -38,5 +38,7 @@ BitmapImage get_grayscale_cuda (const BitmapImage& source) {
   cudaMemcpy(input_gpu, source.get_data(), source.get_height() * source.get_width() * sizeof(Pixel<std::uint8_t>), cudaMemcpyHostToDevice);
   grayscale_kernel<<< {divup(source.get_height(), number_threads_per_block), divup(source.get_width(), number_threads_per_block)}, {number_threads_per_block, number_threads_per_block} >>>(input_gpu, output_gpu, source.get_width(), source.get_height());
   cudaMemcpy(output_image.get_data(), output_gpu, source.get_height() * source.get_width() * sizeof(Pixel<std::uint8_t>), cudaMemcpyDeviceToHost);
+  cudaFree(input_gpu);
+  cudaFree(output_gpu);
   return output_image;
 }
