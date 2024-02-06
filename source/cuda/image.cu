@@ -11,7 +11,7 @@ __global__ void grayscale_kernel(const Pixel<std::uint8_t>* const input, Pixel<s
   int y_global = blockIdx.y * blockDim.y + threadIdx.y;
 
   if (y_global < height && x_global < width) {
-    const auto pixel = input.get_pixel(y_global, x_global);
+    const auto pixel = input[y_global * height + x_global];
     const auto r = pixel.get_red_channel();
     const auto g = pixel.get_green_channel();
     const auto b = pixel.get_blue_channel();
@@ -21,7 +21,7 @@ __global__ void grayscale_kernel(const Pixel<std::uint8_t>* const input, Pixel<s
   
     const auto gray_pixel = BitmapPixel{ gray_converted , gray_converted,  gray_converted };
   
-    output.set_pixel(y_global, x_global, gray_pixel);
+    output[y_global * height + x_global] = gray_pixel;
   }
 }
 
