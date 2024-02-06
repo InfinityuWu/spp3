@@ -34,15 +34,6 @@ __device__ T1 atomicAdd(T1* x, T1 y);
 #define FIND_HASH_SHARED_MEM 0
 #define HASH_SCHEMES_SHARED_MEM 0
 
-class common {
-
-  public:
-
-    // Task 2a)
-    [[nodiscard]] static unsigned int divup (const unsigned int n, const unsigned int d) noexcept {
-      return((unsigned int) std::ceil( ((double) n) / ((double) d) ) );
-    }
-
-  private:
-
-};
+[[nodiscard]] unsigned int divup (const unsigned int n, const unsigned int d) {
+  return((unsigned int) std::ceil( ((double) n) / ((double) d) ) );
+}
