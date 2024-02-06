@@ -11,7 +11,7 @@ __global__ void hash(const std::uint64_t* const values, std::uint64_t* const has
     __shared__ constexpr auto val_c = std::uint64_t{ 6'225'658'194'131'981'369 };
     int x_global = blockIdx.x * blockDim.x + threadIdx.x;
     if(x_global < length){
-        uint64_t value = values[x_global];
+        std::uint64_t value = values[x_global];
         const auto val_1 = (value >> 14) + val_a;
         const auto val_2 = (value << 54) ^ val_b;
         const auto val_3 = (val_1 + val_2) << 4;
@@ -28,7 +28,7 @@ __global__ void flat_hash(const std::uint64_t* const values, std::uint64_t* cons
     __shared__ constexpr auto val_c = std::uint64_t{ 6'225'658'194'131'981'369 };
     int x_global = blockIdx.x * blockDim.x + threadIdx.x;
     if(x_global < length){
-        uint64_t value = values[x_global];
+        std::uint64_t value = values[x_global];
         const auto val_1 = (value >> 14) + val_a;
         const auto val_2 = (value << 54) ^ val_b;
         const auto val_3 = (val_1 + val_2) << 4;
@@ -52,7 +52,7 @@ __global__ void hash_schemes (std::uint64_t* const hashes, const unsigned int le
     __shared__ constexpr auto val_c = std::uint64_t{ 6'225'658'194'131'981'369 };
     int x_global = blockIdx.x * blockDim.x + threadIdx.x;
     if (x_global < length) {
-        uint64_t value = x_global;
+        std::uint64_t value = x_global;
         value += value << 32;
         const auto val_1 = (value >> 14) + val_a;
         const auto val_2 = (value << 54) ^ val_b;
