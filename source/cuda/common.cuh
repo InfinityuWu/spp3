@@ -40,7 +40,7 @@ class common {
 
     // Task 2a)
     [[nodiscard]] static unsigned int divup (const unsigned int n, const unsigned int d) noexcept {
-      return((int) std::ceil( ((double) n) / ((double) d) ) );
+      return((unsigned int) std::ceil( ((double) n) / ((double) d) ) );
     }
 
   private:
