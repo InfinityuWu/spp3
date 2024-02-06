@@ -1,5 +1,7 @@
 #pragma once
 
+#include <cmath>
+
 #ifndef __global__
 // Falls der NVCC die Datei inkludiert, hat dieser __global__ bereits definiert und ignoriert das hier.
 // Falls der Host-Compiler die Datei inkludiert, ist dieser von __global__ verwirrt, also sagen wir ihm, das ist eigentlich leer.
@@ -19,7 +21,7 @@
 #endif
 
 #if defined (__INTELLISENSE__) | defined (__RESHARPER__)
-// Hier können diverse Funktionsdeklarationen eingefügt werden, die der NVCC kennt, der Host-Compiler aber nicht.
+// Hier kÃ¶nnen diverse Funktionsdeklarationen eingefÃ¼gt werden, die der NVCC kennt, der Host-Compiler aber nicht.
 // Wenn die in CUDA-Kerneln aufgerufen werden, zeigt sonst die IDE einen Fehler an.
 // Hier beispielsweise mit atomicAdd, vergleiche https://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html#arithmetic-functions
 template<class T1>
@@ -31,3 +33,16 @@ __device__ T1 atomicAdd(T1* x, T1 y);
 #define FLAT_HASH_SHARED_MEM 0
 #define FIND_HASH_SHARED_MEM 0
 #define HASH_SCHEMES_SHARED_MEM 0
+
+class common {
+
+  public:
+
+    // Task 2a)
+    [[nodiscard]] static unsigned int divup (const unsigned int n, const unsigned int d) noexcept {
+      return((int) std::round( ((double) n) / ((double) d) ) );
+    }
+
+  private:
+
+};
