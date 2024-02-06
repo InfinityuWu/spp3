@@ -5,7 +5,7 @@
 #include <cuda_runtime_api.h>
 #include <device_launch_parameters.h>
 
-__global__ void hash(const std::uint64_t* const values, std::uint64_t* const hashes, const unsigned int length){
+__global__ void hash(const std::uint64_t* const values, std::uint64_t* const hashes, const unsigned int length) {
     int x_global = blockIdx.x * blockDim.x + threadIdx.x;
     if(x_global < length){
         constexpr auto val_a = std::uint64_t{ 5'647'095'006'226'412'969 };
@@ -20,9 +20,10 @@ __global__ void hash(const std::uint64_t* const values, std::uint64_t* const has
         hashes[x_global] = val_3 ^ val_4;
         //return final_hash;
     }
+}
 
 __global__ void flat_hash(const std::uint64_t* const values, std::uint64_t* const hashes, const unsigned int length){
-    int x_global = threadIdx.x;
+    int x_global = blockIdx.x * blockDim.x + threadIdx.x;
     if(x_global < length){
         constexpr auto val_a = std::uint64_t{ 5'647'095'006'226'412'969 };
         constexpr auto val_b = std::uint64_t{ 41'413'938'183'913'153 };
@@ -36,5 +37,4 @@ __global__ void flat_hash(const std::uint64_t* const values, std::uint64_t* cons
         hashes[x_global] = val_3 ^ val_4;
         //return final_hash;
     }
-
 }
