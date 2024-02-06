@@ -53,9 +53,8 @@ BitmapImage get_grayscale_cuda (const BitmapImage& source) {
     //New -> gave Pointers to cudaMemcopied values
   grayscale_kernel<<< {divup(source.get_height(), number_threads_per_block), divup(source.get_width(), number_threads_per_block)}, {number_threads_per_block, number_threads_per_block} >>>(input_gpu, output_gpu, width, height);
     cudaDeviceSynchronize();
-    BitmapImage grayed = BitmapImage(source.get_height(),source.get_width());
   // copying the entire image pixel data back over from the device to host after the kernel has finished its calculation and has arrived at the desired transformation of the input data
-  cudaMemcpy(grayed.getData(), output_gpu, source.get_height() * source.get_width() * sizeof(Pixel<std::uint8_t>), cudaMemcpyDeviceToHost);
+  cudaMemcpy(output_image.getData(), output_gpu, source.get_height() * source.get_width() * sizeof(Pixel<std::uint8_t>), cudaMemcpyDeviceToHost);
 
     // freeing device memory  // New Added Dimensions
     cudaFree(input_gpu);
@@ -63,5 +62,5 @@ BitmapImage get_grayscale_cuda (const BitmapImage& source) {
     cudaFree(width);
     cudaFree(height);
 
-  return grayed;
+  return output_image;
 }
