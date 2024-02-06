@@ -6,7 +6,7 @@
 #include <device_launch_parameters.h>
 
 // Task 2b)
-__global__ void grayscale_kernel(const Pixel<std::uint8_t>* const input, Pixel<std::uint8_t>* const output, const unsigned int width, const unsigned int height) {
+__global__ void grayscale_kernel (const Pixel<std::uint8_t>* const input, Pixel<std::uint8_t>* const output, const unsigned int width, const unsigned int height) {
   int x_global = blockIdx.x * blockDim.x + threadIdx.x;
   int y_global = blockIdx.y * blockDim.y + threadIdx.y;
 
@@ -25,4 +25,9 @@ __global__ void grayscale_kernel(const Pixel<std::uint8_t>* const input, Pixel<s
   }
 }
 
-BitmapImage get_grayscale_cuda(const BitmapImage& source);
+// Task 2c)
+BitmapImage get_grayscale_cuda (const BitmapImage& source) {
+  auto output_image = BitmapImage{source.get_height(), source.get_width()};
+  grayscale_kernel<<< source.get_height(), source.get_width() >>>(source.get_data(), output_image.get_data(), source.get_width(), source.get_height());
+  return output_image;
+}
