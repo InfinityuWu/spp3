@@ -8,6 +8,7 @@
 #include "encryption/FES.h"
 #include "encryption/Key.h"
 #include "image/bitmap_image.h"
+#include <omp.h>
 
 
 class Algorithm {
@@ -44,7 +45,7 @@ class Algorithm {
         constexpr auto val_b = std::uint64_t{ 41'413'938'183'913'153 };
         constexpr auto val_c = std::uint64_t{ 6'225'658'194'131'981'369 };
         std::uint64_t correctValue;
-#pragma omp parallel for lastPrivate(correctValue)
+#pragma omp parallel for
         for (std::uint32_t i = 0; i <= std::numeric_limits<std::uint32_t>::max(); i++){
             std::uint64_t value = i;
             value += value << 32;

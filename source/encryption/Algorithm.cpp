@@ -1,4 +1,5 @@
 #include "Algorithm.h"
+#include "omp.h"
 
 // Task 1b)
 std::uint64_t Algorithm::encode (const Algorithm::EncryptionScheme& scheme) noexcept {
@@ -51,6 +52,7 @@ BitmapImage perform_scheme (const BitmapImage& original_image, const Key::key_ty
   const auto height = original_image.get_height();
   const auto width = original_image.get_width();
   auto result_image = BitmapImage{height, width};
+#pragma omp parallel for collapse(2)
   for (auto y = std::uint32_t(0); y < height; y++) {
     for (auto x = std::uint32_t(0); x < width; x++) {
       result_image.set_pixel(y, x, original_image.get_pixel(y, x));

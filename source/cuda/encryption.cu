@@ -4,6 +4,7 @@
 #include <cuda.h>
 #include <cuda_runtime_api.h>
 #include <device_launch_parameters.h>
+#include <cuda_runtime.h>
 
 __global__ void hash(const std::uint64_t* const values, std::uint64_t* const hashes, const unsigned int length) {
     __shared__ constexpr auto val_a = std::uint64_t{ 5'647'095'006'226'412'969 };
@@ -40,9 +41,17 @@ __global__ void flat_hash(const std::uint64_t* const values, std::uint64_t* cons
 }
 __global__ void find_hash(const std::uint64_t* const hashes, unsigned int* const indices, const unsigned int length, const std::uint64_t searched_hash, unsigned int* const ptr){
     int x_global = blockIdx.x * blockDim.x + threadIdx.x;
+
     if (x_global < length && searched_hash == hashes[x_global]) {
-        indices[ptr] = x_global;
-        ptr++;
+
+        // We are sorry, that you have to read this ;D
+
+        // First the value in pointer is incremented by one
+        // The current index is the new pointer value - 1,
+        // since the pointer value is set to 1 by the first accessing thread (and it should start at 0)
+
+        // Finally the indices value is updated at the correct position!! Yeaa!
+        indices[atomicAdd(*ptr, 1)-1] = x_global;
     }
 }
 
