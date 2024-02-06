@@ -26,7 +26,7 @@ std::uint64_t Algorithm::encode (const Algorithm::EncryptionScheme& scheme) noex
     addend <<= 2 * index;
     encoded += addend;
   }
-  // Old version - += ist im 10er System, brauchen bitweise OR
+  // Old version
   //encoded += encoded << 32;
   // New version
   encoded = encoded | (encoded << 32);
