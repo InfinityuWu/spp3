@@ -31,6 +31,12 @@ __global__ void grayscale_kernel (const Pixel<std::uint8_t>* const input, Pixel<
 BitmapImage get_grayscale_cuda (const BitmapImage& source) {
   auto output_image = BitmapImage{source.get_height(), source.get_width()};
   int number_threads_per_block = 16;
-  grayscale_kernel<<< {divup(source.get_height(), number_threads_per_block), divup(source.get_width(), number_threads_per_block)}, {number_threads_per_block, number_threads_per_block} >>>(source.get_data(), output_image.get_data(), source.get_width(), source.get_height());
+  Pixel<std::uint8_t>** input_gpu;
+  Pixel<std::uint8_t>** output_gpu;
+  cudaMalloc((void**) &input_gpu, source.get_height() * source.get_width() * sizeof(Pixel<std::uint8_t>));
+  cudaMalloc((void**) &output_gpu, source.get_height() * source.get_width() * sizeof(Pixel<std::uint8_t>));
+  cudaMemcpy(input_gpu, source.get_data(), source.get_height() * source.get_width() * sizeof(Pixel<std::uint8_t>), cudaMemcpyHostToDevice);
+  grayscale_kernel<<< {divup(source.get_height(), number_threads_per_block), divup(source.get_width(), number_threads_per_block)}, {number_threads_per_block, number_threads_per_block} >>>(input_gpu, output_gpu, source.get_width(), source.get_height());
+  cudaMemcpy(output_image.get_data(), output_gpu, source.get_height() * source.get_width() * sizeof(Pixel<std::uint8_t>), cudaMemcpyDeviceToHost);
   return output_image;
 }
