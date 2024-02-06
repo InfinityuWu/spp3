@@ -31,8 +31,8 @@ __global__ void grayscale_kernel (const Pixel<std::uint8_t>* const input, Pixel<
 BitmapImage get_grayscale_cuda (const BitmapImage& source) {
   auto output_image = BitmapImage{source.get_height(), source.get_width()};
   int number_threads_per_block = 16;
-  Pixel<std::uint8_t>** input_gpu;
-  Pixel<std::uint8_t>** output_gpu;
+  Pixel<std::uint8_t>* input_gpu;
+  Pixel<std::uint8_t>* output_gpu;
   cudaMalloc((void**) &input_gpu, source.get_height() * source.get_width() * sizeof(Pixel<std::uint8_t>));
   cudaMalloc((void**) &output_gpu, source.get_height() * source.get_width() * sizeof(Pixel<std::uint8_t>));
   cudaMemcpy(input_gpu, source.get_data(), source.get_height() * source.get_width() * sizeof(Pixel<std::uint8_t>), cudaMemcpyHostToDevice);
