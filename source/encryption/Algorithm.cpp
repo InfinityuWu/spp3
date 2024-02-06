@@ -38,6 +38,9 @@ Algorithm::EncryptionScheme Algorithm::decode (const std::uint64_t encoded) {
   Algorithm::EncryptionScheme scheme{};
   for (int index = 0; index < 16; index++) {
       // bits = encrypted >> (i*2)
+    // some bit shifting to have the relevant bits representing the current EncryptionStep
+    // moved into the lowest two bits such that it can be easily compared and respectively
+    // assigned to the resulting EncryptionScheme
     uint64_t first_appearance = (encoded << (62 - 2 * index)) >> 62;
     uint64_t second_appearance = (encoded << (30 - 2 * index)) >> 62;
     if (first_appearance != second_appearance) throw std::exception{};
