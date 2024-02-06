@@ -26,7 +26,10 @@ std::uint64_t Algorithm::encode (const Algorithm::EncryptionScheme& scheme) noex
     addend <<= 2 * index;
     encoded += addend;
   }
-  encoded += encoded << 32;
+  // Old version - += ist im 10er System, brauchen bitweise OR
+  //encoded += encoded << 32;
+  // New version
+  encoded = encoded | (encoded << 32);
   return encoded;
 }
 
@@ -34,6 +37,7 @@ std::uint64_t Algorithm::encode (const Algorithm::EncryptionScheme& scheme) noex
 Algorithm::EncryptionScheme Algorithm::decode (const std::uint64_t encoded) {
   Algorithm::EncryptionScheme scheme{};
   for (int index = 0; index < 16; index++) {
+      // bits = encrypted >> (i*2)
     uint64_t first_appearance = (encoded << (62 - 2 * index)) >> 62;
     uint64_t second_appearance = (encoded << (30 - 2 * index)) >> 62;
     if (first_appearance != second_appearance) throw std::exception{};
@@ -52,16 +56,19 @@ BitmapImage perform_scheme (const BitmapImage& original_image, const Key::key_ty
   const auto height = original_image.get_height();
   const auto width = original_image.get_width();
   auto result_image = BitmapImage{height, width};
+
 #pragma omp parallel for collapse(2)
   for (auto y = std::uint32_t(0); y < height; y++) {
     for (auto x = std::uint32_t(0); x < width; x++) {
       result_image.set_pixel(y, x, original_image.get_pixel(y, x));
     }
   }
+
   const key_type current_key{};
   for (int index = 0; index < 48; index++) {
     current_key[i] = encryption_key[i];
   }
+
   // Actual calculations
   for (int index = 0; index < 16; i++) {
     switch (scheme[index]) {

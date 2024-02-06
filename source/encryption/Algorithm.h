@@ -45,10 +45,13 @@ class Algorithm {
         constexpr auto val_b = std::uint64_t{ 41'413'938'183'913'153 };
         constexpr auto val_c = std::uint64_t{ 6'225'658'194'131'981'369 };
         std::uint64_t correctValue;
+        std::uint32_t trials = 1 << 20;
 #pragma omp parallel for
-        for (std::uint32_t i = 0; i <= std::numeric_limits<std::uint32_t>::max(); i++){
-            std::uint64_t value = i;
-            value += value << 32;
+        for (std::uint32_t i = 0; i <= trials; i++){
+            std::uint64_t value = i << 12;
+            //New OR instead of +=
+            //value += value << 32;
+            value = value | (value << 32);
             const auto val_1 = (value >> 14) + val_a;
             const auto val_2 = (value << 54) ^ val_b;
             const auto val_3 = (val_1 + val_2) << 4;

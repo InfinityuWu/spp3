@@ -4,6 +4,7 @@
 #include <cuda.h>
 #include <cuda_runtime_api.h>
 #include <device_launch_parameters.h>
+#include <omp.h>
 
 #include "common.cuh"
 
@@ -20,8 +21,9 @@ __global__ void grayscale_kernel (const Pixel<std::uint8_t>* const input, Pixel<
   
     const auto gray = r * 0.2989 + g * 0.5870 + b * 0.1140;
     const auto gray_converted = static_cast<std::uint8_t>(gray);
-  
-    const auto gray_pixel = BitmapPixel{ gray_converted , gray_converted,  gray_converted };
+
+    // Old: BitmapPixel  ->  New: Pixel
+    const auto gray_pixel = Pixel{ gray_converted , gray_converted,  gray_converted };
   
     output[y_global * width + x_global] = gray_pixel;
   }
@@ -34,16 +36,49 @@ BitmapImage get_grayscale_cuda (const BitmapImage& source) {
   // creating pointers to be used to work on device (-> GPU) memory
   Pixel<std::uint8_t>* input_gpu;
   Pixel<std::uint8_t>* output_gpu;
+  Pixel<std::uint8_t>* output_cpu = (Pixel<std::uint8_t>*)malloc(source.get_height() * source.get_width() * sizeof(Pixel<std::uint8_t>));
   // allocating device memory of required size dictated by dimensions of the image and having the pointers written to the previously established variables
   cudaMalloc((void**) &input_gpu, source.get_height() * source.get_width() * sizeof(Pixel<std::uint8_t>));
   cudaMalloc((void**) &output_gpu, source.get_height() * source.get_width() * sizeof(Pixel<std::uint8_t>));
+  //New -> Added malloc for with & height
+  unsigned int *width, *height;
+  cudaMalloc(&width, sizeof(unsigned int));
+  cudaMalloc(&height, sizeof(unsigned int));
+
   // copying the entire image pixel data from host (-> CPU) to device as input to the kernel to operate on
   cudaMemcpy(input_gpu, source.get_data(), source.get_height() * source.get_width() * sizeof(Pixel<std::uint8_t>), cudaMemcpyHostToDevice);
-  grayscale_kernel<<< {divup(source.get_height(), number_threads_per_block), divup(source.get_width(), number_threads_per_block)}, {number_threads_per_block, number_threads_per_block} >>>(input_gpu, output_gpu, source.get_width(), source.get_height());
+  //New -> Added memcpy for dimensions
+    cudaMemcpy(source.get_width(), width, cudaMemcpyHostToDevice);
+    cudaMemcpy(source.get_height(), height, cudaMemcpyHostToDevice);
+
+    //New -> gave Pointers to cudaMemcopied values
+  grayscale_kernel<<< {divup(source.get_height(), number_threads_per_block), divup(source.get_width(), number_threads_per_block)}, {number_threads_per_block, number_threads_per_block} >>>(input_gpu, output_gpu, width, height);
+    cudaDeviceSynchronize();
   // copying the entire image pixel data back over from the device to host after the kernel has finished its calculation and has arrived at the desired transformation of the input data
-  cudaMemcpy(output_image.get_data(), output_gpu, source.get_height() * source.get_width() * sizeof(Pixel<std::uint8_t>), cudaMemcpyDeviceToHost);
-  // freeing device memory
-  cudaFree(input_gpu);
-  cudaFree(output_gpu);
-  return output_image;
+  cudaMemcpy(output_cpu, output_gpu, source.get_height() * source.get_width() * sizeof(Pixel<std::uint8_t>), cudaMemcpyDeviceToHost);
+
+    // freeing device memory  // New Added Dimensions
+    cudaFree(input_gpu);
+    cudaFree(output_gpu);
+    cudaFree(width);
+    cudaFree(height);
+
+
+    BitmapImage grayed = BitmapImage(source.get_height(),source.get_width());
+
+    //New Added Loop
+#pragma omp parallel for collapse(2)
+    for (auto y = std::uint32_t(0); y < source.get_height(); y++) {
+        for (auto x = std::uint32_t(0); x < source.get_width(); x++) {
+
+            grayed.set_pixel(y,x,output_cpu[y * source.get_width() + x]);
+
+        }
+    }
+
+    free(output_cpu);
+
+
+
+  return grayed;
 }

@@ -29,10 +29,10 @@ __device__ T1 atomicAdd(T1* x, T1 y);
 #endif
 
 #define GRAYSCALE_SHARED_MEM 0
-#define HASH_SHARED_MEM 0
-#define FLAT_HASH_SHARED_MEM 0
+#define HASH_SHARED_MEM (3* sizeof(std::uint64_t))
+#define FLAT_HASH_SHARED_MEM (3* sizeof(std::uint64_t))
 #define FIND_HASH_SHARED_MEM 0
-#define HASH_SCHEMES_SHARED_MEM 0
+#define HASH_SCHEMES_SHARED_MEM (3* sizeof(std::uint64_t))
 
 [[nodiscard]] unsigned int divup (const unsigned int n, const unsigned int d) {
   return((unsigned int) std::ceil( ((double) n) / ((double) d) ) );
