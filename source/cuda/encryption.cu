@@ -38,3 +38,11 @@ __global__ void flat_hash(const std::uint64_t* const values, std::uint64_t* cons
         //return final_hash;
     }
 }
+__global__ void find_hash(const std::uint64_t* const hashes, unsigned int* const indices, const unsigned int length, const std::uint64_t searched_hash, unsigned int* const ptr){
+    int x_global = blockIdx.x * blockDim.x + threadIdx.x;
+    if (x_global < length && searched_hash == hashes[x_global]) {
+        indices[ptr] = x_global;
+        ptr++;
+    }
+}
+
